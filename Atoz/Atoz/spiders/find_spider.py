@@ -20,6 +20,7 @@ class FindSpider(scrapy.Spider):
             rate_qty = gp.css('a.a-size-small.a-link-normal::text').get()
             offers_qty = gp.css('span.a-color-secondary::text').get()
             price_min = gp.css('span.a-size-base.a-color-price').get()
+            price_max = gp.css('span.a-size-base.a-color-price').get()
 
             yield {
                 'name': name,
@@ -33,6 +34,7 @@ class FindSpider(scrapy.Spider):
                 'rate_qty': normalize_int(rate_qty),
                 'offers_qty': normalize_int(offers_qty),
                 'price_min': normalize_float(price_min),
+                'price_max': prices(price_max)
             }
 
 
@@ -61,3 +63,11 @@ def normalize_float(texto):
         texto = re.split(r'(\d+,\d+)', texto)
         texto = float(texto[1].replace(',', '.'))
     return texto
+
+
+def prices(texto):
+    if texto is not None:
+        texto = re.split(r'(\d+,\d+)', texto)
+        if len(texto) == 5:
+            texto = float(texto[3].replace(',', '.'))
+            return texto
